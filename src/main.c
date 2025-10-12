@@ -42,6 +42,11 @@ void PrintWAV(struct DiggaWAV header)
 
 int main(int argc, char **argv)
 {
+	if (argc < 2)
+	{
+		printf("No sound file provided\n");
+		return -1;
+	}
 	FILE* digga = fopen(argv[1], "rb");
 	struct DiggaWAV header;
 
@@ -56,7 +61,7 @@ int main(int argc, char **argv)
 
 	if (SDL_Init(SDL_INIT_AUDIO) < 0)
 	{
-        	printf("SDL_Init Error: %s\n", SDL_GetError());
+        printf("SDL_Init Error: %s\n", SDL_GetError());
 		return -1;
 	}
 
