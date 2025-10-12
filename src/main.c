@@ -25,27 +25,20 @@ void PrintWAV(struct DiggaWAV header)
 {
 	printf("ChunkID: %.4s\n", header.ChunkID);
 	printf("ChunkSize: %d\n", header.ChunkSize);
-printf("Format: %.4s\n", header.Format);
+	printf("Format: %.4s\n", header.Format);
 
-printf("Subchunk1ID: %.4s\n", header.Subchunk1ID);
-printf("Subchunk1Size: %d\n", header.Subchunk1Size);
-printf("AudioFormat: %d\n", header.AudioFormat);
-printf("NumChannels: %d\n", header.NumChannels);
-printf("SampleRate: %d\n", header.SampleRate);
-printf("ByteRate: %d\n", header.ByteRate);
-printf("BlockAlign: %d\n", header.BlockAlign);
-printf("BitsPerSample: %d\n", header.BitsPerSample);
-
-printf("Subchunk2ID: %.4s\n", header.Subchunk2ID);
-printf("Subchunk2Size %d\n", header.Subchunk2Size);
+	printf("Subchunk1ID: %.4s\n", header.Subchunk1ID);
+	printf("Subchunk1Size: %d\n", header.Subchunk1Size);
+	printf("AudioFormat: %d\n", header.AudioFormat);
+	printf("NumChannels: %d\n", header.NumChannels);
+	printf("SampleRate: %d\n", header.SampleRate);
+	printf("ByteRate: %d\n", header.ByteRate);
+	printf("BlockAlign: %d\n", header.BlockAlign);
+	printf("BitsPerSample: %d\n", header.BitsPerSample);
+	
+	printf("Subchunk2ID: %.4s\n", header.Subchunk2ID);
+	printf("Subchunk2Size %d\n", header.Subchunk2Size);
 }
-
-
-
-
-
-
-
 
 int main(int argc, char **argv)
 {
@@ -76,12 +69,12 @@ int main(int argc, char **argv)
 	want.callback = NULL;
 
 	SDL_AudioDeviceID dev = SDL_OpenAudioDevice(NULL, 0, &want, &have, 0);
-    	if (dev == 0)
+    if (dev == 0)
 	{
-        	printf("SDL_OpenAudioDevice failed: %s\n", SDL_GetError());
-        	SDL_Quit();
-        	return -1;
-    	}
+        printf("SDL_OpenAudioDevice failed: %s\n", SDL_GetError());
+       	SDL_Quit();
+        return -1;
+    }
 
 	size_t byteCount = header.Subchunk2Size;
 
@@ -104,4 +97,3 @@ int main(int argc, char **argv)
 
 	return 0;
 }
-
