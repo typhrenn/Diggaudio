@@ -1,10 +1,15 @@
-CFLAGS = -Iinclude
+CC = gcc
+CFLAGS = -Iinclude -Wall
 LDFLAGS = -lSDL2
 
-.PHONY: clean
+SRC = src/main.c src/diggaudio.c src/sdl_audio.c
+OUT = diggaudio
 
-diggaudio: src/main.c
-	gcc $(CFLAGS) -o diggaudio src/main.c $(LDFLAGS)
+all: $(OUT)
+
+$(OUT): $(SRC)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 clean:
-	rm diggaudio
+	rm -f $(OUT)
+
