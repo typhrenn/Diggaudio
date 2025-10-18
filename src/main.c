@@ -43,8 +43,6 @@ int main(int argc, char **argv) {
 		return FAILURE;
 	}
 
-	printf("Error: %s\n", SDL_GetError());
-
 	Cleanup(PCM, dev);
 	return SUCCESS;
 }
