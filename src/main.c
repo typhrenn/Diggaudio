@@ -10,18 +10,23 @@ int main(int argc, char **argv) {
 	}
 
 	struct DiggaWAV header;
+	
+	// LOAD WAV AND PCM
+	FILE *file = fopen(argv[1], "rb");
 
-	if (LoadWAV(argv[1], &header) != SUCCESS) {
+	if (LoadWAV(file, &header) != SUCCESS) {
 		printf("Failed to load file into the WAV struct: %s\n", argv[1]);
 		return FAILURE;
 	}
 
 	short* PCM = malloc(header.Subchunk2Size);
-	if (!PCM || GetPCM(PCM, header, argv[1]) != SUCCESS) {
+	if (!PCM || GetPCM(file, PCM, header) != SUCCESS) {
 		printf("Failed to load PCM data.\n");
 		free(PCM);
 		return FAILURE;
 	}
+
+	fclose(file);
 
 	PrintWAV(header);
 

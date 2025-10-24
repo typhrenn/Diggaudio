@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -Iinclude -Wall
 LDFLAGS = -lSDL2
 
-SRC = src/main.c src/diggaudio.c src/sdl_audio.c
+SRC = src/*.c
 OUT = diggaudio
 
 all: $(OUT)

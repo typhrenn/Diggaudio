@@ -21,20 +21,15 @@ void PrintWAV(struct DiggaWAV header)
 	printf("Subchunk2Size %d\n", header.Subchunk2Size);
 }
 
-int LoadWAV(const char *filename, struct DiggaWAV *header)
+int LoadWAV(FILE *file, struct DiggaWAV *header)
 {
-	FILE *file = fopen(filename, "rb");
-	if (!file)
-	{
-		return FAILURE;
-	}
-
 	fread(header, 36, 1, file);
 
 	char chunkID[4];
 	int chunkSize;
 	
-	while (1) {
+	while (1) 
+	{
 		if (fread(chunkID, 4, 1, file) != 1)
 		{
 			break;
@@ -44,56 +39,22 @@ int LoadWAV(const char *filename, struct DiggaWAV *header)
 			break;
 		}
 		
-		if (chunkID[0] == 'd' && chunkID[1] == 'a' && chunkID[2] == 't' && chunkID[3] == 'a')
+		if (strcmp(chunkID, "data") == 0)
 		{
 			memcpy(header->Subchunk2ID, chunkID, 4);
 			header->Subchunk2Size = chunkSize;
-			fclose(file);
 			return SUCCESS;
 		}
 		
 		fseek(file, chunkSize, SEEK_CUR);
 	}
 	
-	fclose(file);
 	return FAILURE;
 }
 
-int GetPCM(short *PCM, struct DiggaWAV header, const char *filename)
+int GetPCM(FILE *file, short *PCM, struct DiggaWAV header)
 {
-	FILE *file = fopen(filename, "rb");
-	if (!file)
-	{
-		return FAILURE;
-	}
+	fread(PCM, header.Subchunk2Size, 1, file);
 
-	fread(&header, 36, 1, file);
-
-	char chunkID[4];
-	int chunkSize;
-	
-	while (1)
-	{
-		if (fread(chunkID, 4, 1, file) != 1)
-		{
-			break;
-		}
-
-		if (fread(&chunkSize, 4, 1, file) != 1)
-		{
-			break;
-		}
-		
-		if (chunkID[0] == 'd' && chunkID[1] == 'a' && chunkID[2] == 't' && chunkID[3] == 'a')
-		{
-			fread(PCM, chunkSize, 1, file);
-			fclose(file);
-			return SUCCESS;
-		}
-		
-		fseek(file, chunkSize, SEEK_CUR);
-	}
-	
-	fclose(file);
-	return FAILURE;
+	return SUCCESS;
 }

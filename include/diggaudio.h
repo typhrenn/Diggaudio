@@ -27,7 +27,7 @@ struct __attribute__((__packed__)) DiggaWAV
 
 short FindDataChunk(FILE *file);
 void PrintWAV(struct DiggaWAV header);
-int LoadWAV(const char *filename, struct DiggaWAV *header);
-int GetPCM(short *PCM, struct DiggaWAV header, const char *filename);
+int LoadWAV(FILE *file, struct DiggaWAV *header);
+int GetPCM(FILE *file, short *PCM, struct DiggaWAV header);
 
 #endif
