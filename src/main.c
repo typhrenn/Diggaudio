@@ -80,8 +80,7 @@ int main(int argc, char **argv)
 		return FAILURE;
 	}
 	
-	SDL_Texture* waveTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, 
-												SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
+	SDL_Texture* waveTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
 	if (waveTexture == NULL)
 	{
 		printf("SDL_CreateTexture Error: %s\n", SDL_GetError());
