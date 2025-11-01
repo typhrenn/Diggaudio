@@ -1,8 +1,9 @@
 #include "sdl_audio.h"
 #include <stdlib.h>
 
-int InitSDLAudio(void) {
-	if (SDL_Init(SDL_INIT_AUDIO) < 0) 
+int InitSDL(void)
+{
+	if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO) < 0) 
 	{
 		printf("SDL_Init Error: %s\n", SDL_GetError());
 		return FAILURE;
@@ -43,15 +44,13 @@ int PlayAudio(SDL_AudioDeviceID dev, const short* PCM, size_t data_size, const S
 	return SUCCESS;
 }
 
-void Cleanup(short* PCM, SDL_AudioDeviceID dev) 
+int AudioThread(void* data)
 {
-	if (PCM) 
-	{
-		free(PCM);
-	}
-	if (dev) 
-	{
-		SDL_CloseAudioDevice(dev);
-	}
-	SDL_Quit();
+  struct AudioArgs* args = (struct AudioArgs*)data;
+
+    if (PlayAudio(args->dev, args->PCM, args->dataSize, args->have) != SUCCESS) {
+        return FAILURE;
+    }
+
+    return SUCCESS;
 }

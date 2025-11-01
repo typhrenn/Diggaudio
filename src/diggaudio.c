@@ -21,6 +21,14 @@ void PrintWAV(struct DiggaWAV header)
 	printf("Subchunk2Size %d\n", header.Subchunk2Size);
 }
 
+void PrintTimedPCM(struct TimedPCM timed)
+{
+    for (int i = 0; i < timed.samples; i++)
+    {
+        printf("PCM: %d Time: %lf\n", timed.PCMval[i], timed.time[i]);
+    }
+}
+
 int LoadWAV(FILE *file, struct DiggaWAV *header)
 {
 	fread(header, 36, 1, file);
