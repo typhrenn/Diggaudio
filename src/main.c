@@ -169,8 +169,8 @@ int main(int argc, char **argv)
 		
 		if (isPlaying)
 		{
-			Uint32 currentTime = SDL_GetTicks();
-			Uint32 deltaTime = currentTime - lastUpdateTime;
+			int currentTime = SDL_GetTicks();
+			int deltaTime = currentTime - lastUpdateTime;
 			lastUpdateTime = currentTime;
 			
 			currentPlayTime += deltaTime / 1000.0;
