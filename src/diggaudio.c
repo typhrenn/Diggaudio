@@ -47,7 +47,7 @@ int LoadWAV(FILE *file, struct DiggaWAV *header)
 			break;
 		}
 		
-		if (strcmp(chunkID, "data") == 0)
+		if (strncmp(chunkID, "data", 4) == 0)
 		{
 			memcpy(header->Subchunk2ID, chunkID, 4);
 			header->Subchunk2Size = chunkSize;

@@ -3,11 +3,19 @@
 
 #include <stdlib.h>
 #include <SDL2/SDL.h>
+#include <math.h>
+#include <time.h>
 
 #define SCREEN_WIDTH 1600
 #define SCREEN_HEIGHT 800
 
 #define WAVE_WIDTH 0.9
+
+double get_time_ms() {
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    return (ts.tv_sec * 1000.0) + (ts.tv_nsec / 1000000.0);
+}
 
 int main(int argc, char **argv)
 {
@@ -96,20 +104,51 @@ int main(int argc, char **argv)
 	double targetWidth = SCREEN_WIDTH * WAVE_WIDTH;
 	double margin = (SCREEN_WIDTH - targetWidth) / 2.0;
 	
-	double xScale = targetWidth / timed.samples;
 	double yScale = SCREEN_HEIGHT / 4.0;
 	double centerY = SCREEN_HEIGHT / 2.0;
 	
-	for (int i = 1; i < timed.samples; i++)
+	double start_time = get_time_ms();
+	
+	int samplesPerSegment = timed.samples / (SCREEN_WIDTH * WAVE_WIDTH);
+	if (samplesPerSegment < 1) samplesPerSegment = 1;
+	
+	for (int segment = 0; segment < SCREEN_WIDTH * WAVE_WIDTH; segment++)
 	{
-		int x1 = margin + (i-1) * xScale;
-		int x2 = margin + i * xScale;
-	
-		int y1 = centerY - (timed.PCMval[i-1] / 32768.0) * yScale;
-		int y2 = centerY - (timed.PCMval[i] / 32768.0) * yScale;
-	
-		SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
+		int startSample = segment * samplesPerSegment;
+		int endSample = startSample + samplesPerSegment;
+		
+		if (endSample >= timed.samples)
+		{
+			endSample = timed.samples - 1;
+		}
+		
+		short minVal = timed.PCMval[startSample];
+		short maxVal = timed.PCMval[startSample];
+		
+		for (int j = startSample + 1; j < endSample; j++)
+		{
+			if (timed.PCMval[j] < minVal)
+			{
+				minVal = timed.PCMval[j];
+			}
+
+			if (timed.PCMval[j] > maxVal)
+			{
+				maxVal = timed.PCMval[j];
+			}
+		}
+		
+		int x = margin + segment;
+		int y1 = centerY - (minVal / 32768.0) * yScale;
+		int y2 = centerY - (maxVal / 32768.0) * yScale;
+		
+		SDL_RenderDrawLine(renderer, x, y1, x, y2);
 	}
+	
+	double end_time = get_time_ms();
+	double generation_time = end_time - start_time;
+	
+	printf("Wave visualization time: %.3f milliseconds\n", generation_time);
 	
 	SDL_SetRenderTarget(renderer, NULL);
 	
@@ -121,7 +160,6 @@ int main(int argc, char **argv)
 	SDL_Event e;
 	bool quit = false;
 	
-	// Main Loop
 	while(!quit)
 	{
 		while(SDL_PollEvent(&e))
@@ -138,8 +176,6 @@ int main(int argc, char **argv)
 						case SDLK_SPACE:
 							if (!isPlaying)
 							{
-	//							PrintTimedPCM(timed);
-								
 								struct AudioArgs* args = malloc(sizeof(struct AudioArgs));
 								
 								args->dev = dev;
@@ -169,8 +205,8 @@ int main(int argc, char **argv)
 		
 		if (isPlaying)
 		{
-			Uint32 currentTime = SDL_GetTicks();
-			Uint32 deltaTime = currentTime - lastUpdateTime;
+			int currentTime = SDL_GetTicks();
+			int deltaTime = currentTime - lastUpdateTime;
 			lastUpdateTime = currentTime;
 			
 			currentPlayTime += deltaTime / 1000.0;
